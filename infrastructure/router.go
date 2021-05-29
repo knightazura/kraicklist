@@ -40,6 +40,7 @@ func setupServer(services *Services) {
 
 	// Advertisement routes
 	http.HandleFunc("/advertisement/search", adController.Search)
+	http.HandleFunc("/advertisement", adController.Store)
 	// Challenge purpose: mock of /advertisement/upload endpoint
 	adController.Upload()
 

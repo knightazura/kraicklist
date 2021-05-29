@@ -7,7 +7,12 @@ import (
 
 type AdvertisementRepository struct {}
 
-func(ar *AdvertisementRepository) Store() (newAd domain.Advertisement, newDoc domain.GeneralDocument) {
+func(ar *AdvertisementRepository) Store(payload *domain.Advertisement) (newAd domain.Advertisement, newDoc domain.GeneralDocument) {
+	newAd = *payload
+	newDoc = domain.GeneralDocument{
+		ID: payload.ID,
+		Data: payload,
+	}
 	return
 }
 

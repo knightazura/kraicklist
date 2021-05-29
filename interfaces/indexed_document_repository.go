@@ -9,7 +9,7 @@ type IndexedDocumentRepository struct {
 	SearchEngine contracts.SearchEngine
 }
 
-func (id *IndexedDocumentRepository) SearchDocs(query string, indexName string) []domain.IndexedDocument {
+func (id *IndexedDocumentRepository) SearchDocs(query string, indexName string) domain.SearchedDocument {
 	// Deciding search engine vendor happened here
 	docs := id.SearchEngine.PerformSearch(query, indexName)
 
@@ -17,7 +17,7 @@ func (id *IndexedDocumentRepository) SearchDocs(query string, indexName string) 
 }
 
 // Convert general document to meilisearch document
-func (id *IndexedDocumentRepository) ToIndexedDocument(docs domain.GeneralDocuments, indexName string) {
+func (id *IndexedDocumentRepository) IndexDocs(docs domain.GeneralDocuments, indexName string) {
 	id.SearchEngine.IndexDocuments(docs, indexName)
 
 	return

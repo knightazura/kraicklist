@@ -1,11 +1,10 @@
 package vendors
 
 import (
+	"fmt"
 	"github.com/knightazura/domain"
-	"log"
-	"math/rand"
-
 	"github.com/meilisearch/meilisearch-go"
+	"log"
 )
 
 type Meilisearch struct {
@@ -39,13 +38,9 @@ func MSAddDocuments(client meilisearch.ClientInterface, docs domain.GeneralDocum
 		}
 	}
 
-	var documents []domain.Advertisement
+	var documents domain.GeneralDocuments
 	for _, doc := range docs {
-		documents = append(documents, domain.Advertisement{
-			ID:      doc.ID,
-			Title:   doc.Title,
-			Content: doc.Content,
-		})
+		documents = append(documents, doc)
 	}
 
 	_, err := client.Documents(indexName).AddOrUpdate(documents)
@@ -53,7 +48,7 @@ func MSAddDocuments(client meilisearch.ClientInterface, docs domain.GeneralDocum
 		log.Fatalf("Failed to add %s documents: %v", indexName, err)
 		return
 	}
-	log.Println("Berhasil memasukkan dokumen")
+	fmt.Printf("%s index created successfully\n", indexName)
 }
 
 func MSSearch(client meilisearch.ClientInterface, indexName string, query string) (result domain.SearchedDocument) {

@@ -3,6 +3,7 @@ package interfaces
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/knightazura/domain"
 	"github.com/knightazura/services"
 	"github.com/knightazura/usecases"
 	"net/http"
@@ -26,6 +27,25 @@ func InitAdvertisementController(se contracts.SearchEngine, seeder *services.See
 			},
 		},
 	}
+}
+
+func (controller *Advertisement) Store(writer http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodPost {
+		writer.WriteHeader(http.StatusMethodNotAllowed)
+		writer.Write([]byte("Method not allowed"))
+		return
+	}
+
+	// Parse the request data
+	var payload domain.Advertisement
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(req.Body)
+	json.Unmarshal(buf.Bytes(), &payload)
+
+	controller.AdvertisementInteractor.Store(&payload)
+
+	writer.WriteHeader(http.StatusOK)
+	writer.Write(buf.Bytes())
 }
 
 // This should be a route handler function
