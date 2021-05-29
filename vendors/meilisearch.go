@@ -56,18 +56,20 @@ func MSAddDocuments(client meilisearch.ClientInterface, docs domain.GeneralDocum
 	log.Println("Berhasil memasukkan dokumen")
 }
 
-func MSSearch(client meilisearch.ClientInterface, indexName string, query string) (docs []domain.IndexedDocument) {
+func MSSearch(client meilisearch.ClientInterface, indexName string, query string) (result domain.SearchedDocument) {
+	limit := int64(10)
 	res, _ := client.Search(indexName).Search(meilisearch.SearchRequest{
 		Query:  query,
-		Limit:  10,
-		Offset: 1,
+		Limit:  limit,
+		Offset: 0,
 	})
 
-	for _, h := range res.Hits {
-		docs = append(docs, domain.IndexedDocument{
-			ID:   rand.Int63(),
-			Data: h,
-		})
+	result = domain.SearchedDocument{
+		Hits: res.Hits,
+		Limit: limit,
+		Offset: 0,
+		TotalHits: res.NbHits,
+		Query: query,
 	}
 	return
 }

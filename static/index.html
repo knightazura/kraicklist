@@ -23,20 +23,19 @@
           ev.preventDefault();
           const data = Object.fromEntries(new FormData(form));
           const response = fetch(`/advertisement/search?q=${data.query}`).then(response => {
-            response.json().then(results => {
-              if (!results) {
+            response.json().then(result => {
+              if (!result) {
                 alert(`No result for ${data.query}`);
                 return;
               }
-              Controller.updateList(results);
+              Controller.updateList(result);
             });
           });
         },
 
-        updateList: results => {
+        updateList: result => {
           const rows = [];
-          for (let result of results) {
-            const data = result.Data;
+          for (let { data } of result.hits) {
             rows.push(
               `
                             <li>

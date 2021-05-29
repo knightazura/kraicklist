@@ -27,11 +27,11 @@ func (se *SearchEngineHandler) IndexDocuments(docs domain.GeneralDocuments, inde
 	vendors.MSAddDocuments(client, docs, indexName)
 }
 
-func (se *SearchEngineHandler) PerformSearch(query string, indexName string) (docs []domain.IndexedDocument) {
+func (se *SearchEngineHandler) PerformSearch(query string, indexName string) (result domain.SearchedDocument) {
 	// TO DO: Check the config which search engine client is using
 	client := se.Meilisearch.Client
 
-	docs = vendors.MSSearch(
+	result = vendors.MSSearch(
 		client,
 		indexName,
 		query,

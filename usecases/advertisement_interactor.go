@@ -16,6 +16,8 @@ const EntityName = "advertisement"
 func (adInteractor *AdvertisementInteractor) Search(query string) []domain.IndexedDocument {
 	docs := adInteractor.IndexedDocumentRepository.SearchDocs(query, EntityName)
 
+func (adInteractor *AdvertisementInteractor) Search(query string) domain.SearchedDocument {
+	docs := adInteractor.IndexedDocumentRepository.SearchDocs(query, EntityName)
 	return docs
 }
 

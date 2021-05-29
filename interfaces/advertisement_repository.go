@@ -20,9 +20,8 @@ func (ar *AdvertisementRepository) BulkStore(ads []domain.Advertisement) (newAds
 	for _, ad := range ads {
 		newAds = append(newAds, ad)
 		newDocs = append(newDocs, domain.GeneralDocument{
-			ID:      ad.ID,
-			Title:   ad.Title,
-			Content: ad.Content,
+			ID: ad.ID,
+			Data: ad,
 		})
 	}
 	return
