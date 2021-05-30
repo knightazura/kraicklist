@@ -19,12 +19,12 @@ func InitSeeder() *Seeder {
 }
 
 // Load advertisement model data from file
-func (s *Seeder) LoadData(path string) (out domain.Advertisements){
+func (s *Seeder) LoadData(path string) (out *domain.Advertisements){
 	// Open file
 	file, err := os.Open(path)
 	if err != nil {
 		log.Fatalf("unable to open source file due: %v", err)
-		return
+		return nil
 	}
 	defer file.Close()
 
@@ -32,19 +32,20 @@ func (s *Seeder) LoadData(path string) (out domain.Advertisements){
 	reader, err := gzip.NewReader(file)
 	if err != nil {
 		log.Fatalf("unable to initialize gzip reader due: %v", err)
-		return
+		return nil
 	}
 
 	// read the reader using scanner to contstruct records
 	cs := bufio.NewScanner(reader)
+	var o domain.Advertisements
 	for cs.Scan() {
 		var model domain.Advertisement
 		err = json.Unmarshal(cs.Bytes(), &model)
 		if err != nil {
 			continue
 		}
-		out = append(out, model)
+		o = append(o, model)
 	}
 
-	return
+	return &o
 }

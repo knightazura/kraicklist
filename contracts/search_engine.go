@@ -6,5 +6,5 @@ import (
 
 type SearchEngine interface {
 	PerformSearch(query string, indexName string) domain.SearchedDocument
-	IndexDocuments(docs domain.GeneralDocuments, indexName string)
+	IndexDocuments(docs *domain.GeneralDocuments, indexName string)
 }

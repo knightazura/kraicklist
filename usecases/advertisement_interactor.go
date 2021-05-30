@@ -12,13 +12,13 @@ type AdvertisementInteractor struct {
 
 const EntityName = "advertisement"
 
-func (adInteractor *AdvertisementInteractor) Store(payload *domain.Advertisement) {
+func (adInteractor *AdvertisementInteractor) Store(payload domain.Advertisement) {
 	// Add to database
-	newAd, newDoc := adInteractor.AdvertisementRepository.Store(payload)
+	newAd, newDoc := adInteractor.AdvertisementRepository.Store(&payload)
 	log.Printf(`New ad: "%s" has been stored successfully`, newAd.Title)
 
 	// Index the new entity
-	adInteractor.ConvertToIndexedDocuments([]domain.GeneralDocument{newDoc})
+	adInteractor.ConvertToIndexedDocuments(domain.GeneralDocuments{*newDoc})
 }
 
 func (adInteractor *AdvertisementInteractor) Search(query string) domain.SearchedDocument {
@@ -26,18 +26,18 @@ func (adInteractor *AdvertisementInteractor) Search(query string) domain.Searche
 	return docs
 }
 
-func (adInteractor *AdvertisementInteractor) Upload(ads domain.Advertisements) (newAds domain.Advertisements, docs domain.GeneralDocuments) {
+func (adInteractor *AdvertisementInteractor) Upload(ads domain.Advertisements) (newAds *domain.Advertisements, docs *domain.GeneralDocuments) {
 	// Add to database
-	newAds, docs = adInteractor.AdvertisementRepository.BulkStore(ads)
+	newAds, docs = adInteractor.AdvertisementRepository.BulkStore(&ads)
 
 	// Index the new entities
-	adInteractor.ConvertToIndexedDocuments(docs)
+	adInteractor.ConvertToIndexedDocuments(*docs)
 	return
 }
 
 // Convert advertisement data to search engine document
 // Should add context as first parameter
 func (adInteractor *AdvertisementInteractor) ConvertToIndexedDocuments(docs domain.GeneralDocuments) {
-	adInteractor.IndexedDocumentRepository.IndexDocs(docs, EntityName)
+	adInteractor.IndexedDocumentRepository.IndexDocs(&docs, EntityName)
 	return
 }

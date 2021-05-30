@@ -21,10 +21,10 @@ func InitSearchEngine() (contracts.SearchEngine, error) {
 	return seHandler, nil
 }
 
-func (se *SearchEngineHandler) IndexDocuments(docs domain.GeneralDocuments, indexName string) {
+func (se *SearchEngineHandler) IndexDocuments(docs *domain.GeneralDocuments, indexName string) {
 	// TO DO: Check the config which search engine client is using
 	client := se.Meilisearch.Client
-	vendors.MSAddDocuments(client, docs, indexName)
+	vendors.MSAddDocuments(client, *docs, indexName)
 }
 
 func (se *SearchEngineHandler) PerformSearch(query string, indexName string) (result domain.SearchedDocument) {

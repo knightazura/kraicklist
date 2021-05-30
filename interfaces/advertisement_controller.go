@@ -42,7 +42,7 @@ func (controller *Advertisement) Store(writer http.ResponseWriter, req *http.Req
 	buf.ReadFrom(req.Body)
 	json.Unmarshal(buf.Bytes(), &payload)
 
-	controller.AdvertisementInteractor.Store(&payload)
+	controller.AdvertisementInteractor.Store(payload)
 
 	writer.WriteHeader(http.StatusOK)
 	writer.Write(buf.Bytes())
@@ -53,8 +53,10 @@ func (controller *Advertisement) Store(writer http.ResponseWriter, req *http.Req
 func (controller *Advertisement) Upload() {
 	// Load ads data from file
 	adDocs := controller.Seeder.LoadData("./data.gz")
+	if adDocs != nil {
+		controller.AdvertisementInteractor.Upload(*adDocs)
+	}
 
-	controller.AdvertisementInteractor.Upload(adDocs)
 }
 
 func (controller *Advertisement) Search(writer http.ResponseWriter, req *http.Request) {

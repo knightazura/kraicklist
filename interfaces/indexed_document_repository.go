@@ -17,7 +17,7 @@ func (id *IndexedDocumentRepository) SearchDocs(query string, indexName string) 
 }
 
 // Convert general document to meilisearch document
-func (id *IndexedDocumentRepository) IndexDocs(docs domain.GeneralDocuments, indexName string) {
+func (id *IndexedDocumentRepository) IndexDocs(docs *domain.GeneralDocuments, indexName string) {
 	id.SearchEngine.IndexDocuments(docs, indexName)
 
 	return
