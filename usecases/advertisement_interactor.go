@@ -12,13 +12,15 @@ type AdvertisementInteractor struct {
 
 const EntityName = "advertisement"
 
-func (adInteractor *AdvertisementInteractor) Store(payload domain.Advertisement) {
+func (adInteractor *AdvertisementInteractor) Store(payload domain.Advertisement) *domain.Advertisement {
 	// Add to database
 	newAd, newDoc := adInteractor.AdvertisementRepository.Store(&payload)
 	log.Printf(`New ad: "%s" has been stored successfully`, newAd.Title)
 
 	// Index the new entity
 	adInteractor.ConvertToIndexedDocuments(domain.GeneralDocuments{*newDoc})
+
+	return newAd
 }
 
 func (adInteractor *AdvertisementInteractor) Search(query string) domain.SearchedDocument {

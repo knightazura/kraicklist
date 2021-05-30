@@ -1,0 +1,19 @@
+version: '3.5'
+
+networks:
+  kraicklist_test:
+    driver: bridge
+
+volumes:
+  meilisearch_test:
+    driver: local
+
+services:
+  meilisearch_test:
+    image: getmeili/meilisearch:latest
+    volumes:
+      - ~/.docker/meilisearch_test:/var/lib/meilisearch
+    ports:
+      - "7007:7700"
+    networks:
+      - kraicklist_test

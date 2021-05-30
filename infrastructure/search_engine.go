@@ -4,6 +4,7 @@ import (
 	"github.com/knightazura/contracts"
 	"github.com/knightazura/domain"
 	"github.com/knightazura/vendors"
+	"os"
 )
 
 type SearchEngineHandler struct {
@@ -16,7 +17,7 @@ func InitSearchEngine() (contracts.SearchEngine, error) {
 	seHandler := &SearchEngineHandler{}
 
 	// Create (any) search engine instances here
-	seHandler.Meilisearch = vendors.InitMeilisearch()
+	seHandler.Meilisearch = vendors.InitMeilisearch(os.Getenv("APP_MODE"))
 
 	return seHandler, nil
 }

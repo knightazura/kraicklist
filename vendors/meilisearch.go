@@ -5,15 +5,20 @@ import (
 	"github.com/knightazura/domain"
 	"github.com/meilisearch/meilisearch-go"
 	"log"
+	"os"
 )
 
 type Meilisearch struct {
 	Client meilisearch.ClientInterface
 }
 
-func InitMeilisearch() *Meilisearch {
+func InitMeilisearch(mode string) *Meilisearch {
+	port := os.Getenv("SEARCH_ENGINE_PORT")
+	if mode == "test" {
+		port = os.Getenv("SEARCH_ENGINE_TEST_PORT")
+	}
 	config := meilisearch.Config{
-		Host: "http://127.0.0.1:7700",
+		Host: "http://127.0.0.1:" + port,
 		//APIKey: "masterkey",
 	}
 	client := meilisearch.NewClient(config)

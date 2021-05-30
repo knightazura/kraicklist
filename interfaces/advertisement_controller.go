@@ -44,6 +44,7 @@ func (controller *Advertisement) Store(writer http.ResponseWriter, req *http.Req
 
 	controller.AdvertisementInteractor.Store(payload)
 
+	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)
 	writer.Write(buf.Bytes())
 }
