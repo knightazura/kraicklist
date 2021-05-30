@@ -1,0 +1,23 @@
+name: Integration test
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  integration_test:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: "1.15"
+
+    - uses: actions/checkout@v2
+    - name: Build test environment
+      run: docker-compose -f docker-compose.test.yml up -d
+
+    - name: Test
+      env:
+        PORT: 7007
+      run: go test ./...
