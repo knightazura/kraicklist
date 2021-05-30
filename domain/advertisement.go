@@ -9,3 +9,5 @@ type Advertisement struct {
 	UpdatedAt int64    `json:"updated_at"`
 	ImageURLs []string `json:"image_urls"`
 }
+
+type Advertisements []Advertisement

@@ -19,7 +19,7 @@ func InitSeeder() *Seeder {
 }
 
 // Load advertisement model data from file
-func (s *Seeder) LoadData(path string) (out []domain.Advertisement){
+func (s *Seeder) LoadData(path string) (out domain.Advertisements){
 	// Open file
 	file, err := os.Open(path)
 	if err != nil {

@@ -26,7 +26,7 @@ func (adInteractor *AdvertisementInteractor) Search(query string) domain.Searche
 	return docs
 }
 
-func (adInteractor *AdvertisementInteractor) Upload(ads []domain.Advertisement) (newAds []domain.Advertisement, docs domain.GeneralDocuments) {
+func (adInteractor *AdvertisementInteractor) Upload(ads domain.Advertisements) (newAds domain.Advertisements, docs domain.GeneralDocuments) {
 	// Add to database
 	newAds, docs = adInteractor.AdvertisementRepository.BulkStore(ads)
 

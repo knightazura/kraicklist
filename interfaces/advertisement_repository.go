@@ -16,7 +16,7 @@ func(ar *AdvertisementRepository) Store(payload *domain.Advertisement) (newAd do
 	return
 }
 
-func (ar *AdvertisementRepository) BulkStore(ads []domain.Advertisement) (newAds []domain.Advertisement, newDocs domain.GeneralDocuments) {
+func (ar *AdvertisementRepository) BulkStore(ads domain.Advertisements) (newAds domain.Advertisements, newDocs domain.GeneralDocuments) {
 	if len(ads) == 0 {
 		_ = fmt.Errorf("There's no ads that need to be converted to docs")
 		return
