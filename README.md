@@ -8,5 +8,5 @@ Simple web app for fictional startup called KraickList. This app will allow user
 - [x] Experiment with architecture solution
 - [x] Implement better search experience & testing
 - [ ] Use environment variables for various configuration
-- [ ] Use Docker
+- [x] Use Docker
 - [ ] Setup deployment configuration
