@@ -19,5 +19,6 @@ jobs:
 
     - name: Test
       env:
+        APP_MODE: test
         PORT: 7007
       run: go test ./...
