@@ -9,14 +9,12 @@ import (
 	"github.com/knightazura/services"
 	"github.com/knightazura/usecases"
 	"github.com/knightazura/utils"
-	"github.com/knightazura/vendors"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"log"
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 	"time"
 )
@@ -31,6 +29,7 @@ var	advertisementInteractor = &usecases.AdvertisementInteractor{
 type IntegrationTestSuite struct {
 	suite.Suite
 	EntityName string
+	SearchEngine *services.SearchEngineHandler
 	Logger *utils.Logger
 }
 
@@ -38,6 +37,7 @@ func (suite *IntegrationTestSuite) SetupTest() {
 	logger := utils.InitLogger()
 	infrastructure.Bootstrap(logger)
 	suite.EntityName = "advertisement"
+	suite.SearchEngine, _ = services.InitSearchEngine()
 	suite.Logger = logger
 }
 
@@ -128,7 +128,10 @@ func (suite *IntegrationTestSuite) TestSearchAd() {
 			json.Unmarshal(sr, &searchResponse)
 
 			var doc domain.GeneralDocument
-			d, _ := json.Marshal(searchResponse.Hits[0])
+			d, err := json.Marshal(searchResponse.Hits[0])
+			if err != nil {
+				suite.Logger.LogError("Integration test: %s", err.Error())
+			}
 			json.Unmarshal(d, &doc)
 
 			var docData domain.Advertisement
@@ -166,10 +169,8 @@ func (suite *IntegrationTestSuite) hitStoreApi(payload domain.Advertisement) *do
 }
 
 func (suite *IntegrationTestSuite) createTestServer(endpoint string) *httptest.Server {
-	searchEngine, _ := infrastructure.InitSearchEngine()
 	seeder := &services.Seeder{}
-
-	adController := interfaces.InitAdvertisementController(suite.Logger, searchEngine, seeder)
+	adController := interfaces.InitAdvertisementController(suite.Logger, suite.SearchEngine, seeder)
 
 	if endpoint == "store" {
 		return httptest.NewServer(http.HandlerFunc(adController.Store))
@@ -179,8 +180,7 @@ func (suite *IntegrationTestSuite) createTestServer(endpoint string) *httptest.S
 }
 
 func (suite *IntegrationTestSuite) clearIndex() {
-	ms := vendors.InitMeilisearch(os.Getenv("APP_MODE"))
-	ms.Client.Indexes().Delete(suite.EntityName)
+	suite.SearchEngine.DeleteIndex(suite.EntityName)
 }
 
 func randomString(n int) string {

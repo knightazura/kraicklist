@@ -5,6 +5,7 @@ import (
 )
 
 type SearchEngine interface {
-	PerformSearch(query string, indexName string) domain.SearchedDocument
-	IndexDocuments(docs *domain.GeneralDocuments, indexName string)
+	Search(query string, indexName string) domain.SearchedDocument
+	Add(docs *domain.GeneralDocuments, indexName string)
+	DeleteIndex(indexName string)
 }

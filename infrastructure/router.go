@@ -7,13 +7,11 @@ import (
 	"github.com/knightazura/utils"
 	"net/http"
 	"os"
-
-	"github.com/knightazura/contracts"
 )
 
 type Services struct{
 	Seeder *services.Seeder
-	SearchEngine contracts.SearchEngine
+	SearchEngine *services.SearchEngineHandler
 }
 
 func Dispatch(logger *utils.Logger) {
@@ -23,7 +21,7 @@ func Dispatch(logger *utils.Logger) {
 
 func setupServices() *Services {
 	// Search engine
-	searchEngine, _ := InitSearchEngine()
+	searchEngine, _ := services.InitSearchEngine()
 
 	return &Services{
 		Seeder: &services.Seeder{},
@@ -42,7 +40,9 @@ func setupServer(logger *utils.Logger, services *Services) {
 	http.HandleFunc("/advertisement/search", adController.Search)
 	http.HandleFunc("/advertisement", adController.Store)
 	// Challenge purpose: mock of /advertisement/upload endpoint
-	adController.Upload()
+	if os.Getenv("SEARCH_ENGINE_ACTIVE") == "meilisearch" {
+		adController.Upload()
+	}
 
 	// Setup and start server
 	port := os.Getenv("APP_PORT")

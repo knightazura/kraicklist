@@ -1,12 +1,12 @@
 package interfaces
 
 import (
-	"github.com/knightazura/contracts"
 	"github.com/knightazura/domain"
+	"github.com/knightazura/services"
 )
 
 type IndexedDocumentRepository struct {
-	SearchEngine contracts.SearchEngine
+	SearchEngine *services.SearchEngineHandler
 }
 
 func (id *IndexedDocumentRepository) SearchDocs(query string, indexName string) domain.SearchedDocument {

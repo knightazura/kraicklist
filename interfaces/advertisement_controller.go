@@ -7,8 +7,6 @@ import (
 	"github.com/knightazura/usecases"
 	"github.com/knightazura/utils"
 	"net/http"
-
-	"github.com/knightazura/contracts"
 )
 
 type Advertisement struct {
@@ -18,7 +16,7 @@ type Advertisement struct {
 }
 
 // TO DO: to pass config value as parameter
-func InitAdvertisementController(logger *utils.Logger, se contracts.SearchEngine, seeder *services.Seeder) *Advertisement {
+func InitAdvertisementController(logger *utils.Logger, se *services.SearchEngineHandler, seeder *services.Seeder) *Advertisement {
 	return &Advertisement{
 		Seeder: seeder,
 		AdvertisementInteractor: usecases.AdvertisementInteractor{
