@@ -18,7 +18,7 @@ func InitMeilisearch(mode string) *Meilisearch {
 		port = os.Getenv("SEARCH_ENGINE_TEST_PORT")
 	}
 	config := meilisearch.Config{
-		Host: "http://127.0.0.1:" + port,
+		Host: os.Getenv("SEARCH_ENGINE_HOST") + ":" + port,
 		//APIKey: "masterkey",
 	}
 	client := meilisearch.NewClient(config)

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/knightazura/interfaces"
 	"github.com/knightazura/services"
-	"log"
+	"github.com/knightazura/utils"
 	"net/http"
 	"os"
 
@@ -16,9 +16,9 @@ type Services struct{
 	SearchEngine contracts.SearchEngine
 }
 
-func Dispatch(/** services should be parameters here */) {
+func Dispatch(logger *utils.Logger) {
 	services := setupServices()
-	setupServer(services)
+	setupServer(logger, services)
 }
 
 func setupServices() *Services {
@@ -31,12 +31,12 @@ func setupServices() *Services {
 	}
 }
 
-func setupServer(services *Services) {
+func setupServer(logger *utils.Logger, services *Services) {
 	// Handle static files for frontend
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/", fs)
 
-	adController := interfaces.InitAdvertisementController(services.SearchEngine, services.Seeder)
+	adController := interfaces.InitAdvertisementController(logger, services.SearchEngine, services.Seeder)
 
 	// Advertisement routes
 	http.HandleFunc("/advertisement/search", adController.Search)
@@ -53,6 +53,6 @@ func setupServer(services *Services) {
 	
 	err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 	if err != nil {
-		log.Fatalf("unable to start server due: %v", err)
+		logger.LogError("unable to start server due: %s", err.Error())
 	}
 }

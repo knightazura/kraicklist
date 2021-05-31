@@ -2,18 +2,18 @@ package infrastructure
 
 import (
 	"bufio"
-	"log"
+	"github.com/knightazura/utils"
 	"os"
 	"strings"
 )
 
 // Load app configuration variables from an env file.
-func Bootstrap(/** logger should be parameter here */) {
+func Bootstrap(logger *utils.Logger) {
 	filePath := ".env"
 
 	envFile, err := os.Open(filePath)
 	if err != nil {
-		log.Fatalf("Failed to open env file %s", err)
+		logger.LogError("Failed to open env file %s", err.Error())
 	}
 	defer envFile.Close()
 
@@ -24,7 +24,7 @@ func Bootstrap(/** logger should be parameter here */) {
 		lines = append(lines, scanner.Text())
 	}
 	if err := scanner.Err(); err != nil {
-		log.Fatalf("Error reading env file %s", err)
+		logger.LogError("Error reading env file %s", err.Error())
 	}
 
 	for _, line := range lines {

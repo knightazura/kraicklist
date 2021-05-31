@@ -1,11 +1,11 @@
 package interfaces
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/knightazura/domain"
 	"github.com/knightazura/services"
 	"github.com/knightazura/usecases"
+	"github.com/knightazura/utils"
 	"net/http"
 
 	"github.com/knightazura/contracts"
@@ -14,10 +14,11 @@ import (
 type Advertisement struct {
 	Seeder *services.Seeder
 	AdvertisementInteractor usecases.AdvertisementInteractor
+	Logger *utils.Logger
 }
 
 // TO DO: to pass config value as parameter
-func InitAdvertisementController(se contracts.SearchEngine, seeder *services.Seeder) *Advertisement {
+func InitAdvertisementController(logger *utils.Logger, se contracts.SearchEngine, seeder *services.Seeder) *Advertisement {
 	return &Advertisement{
 		Seeder: seeder,
 		AdvertisementInteractor: usecases.AdvertisementInteractor{
@@ -26,27 +27,27 @@ func InitAdvertisementController(se contracts.SearchEngine, seeder *services.See
 				SearchEngine: se,
 			},
 		},
+		Logger: logger,
 	}
 }
 
 func (controller *Advertisement) Store(writer http.ResponseWriter, req *http.Request) {
+	response := utils.InitResponse(controller.Logger, writer)
+
 	if req.Method != http.MethodPost {
-		writer.WriteHeader(http.StatusMethodNotAllowed)
-		writer.Write([]byte("Method not allowed"))
-		return
+		response.MethodNotAllowedResponse("Method not allowed")
 	}
 
 	// Parse the request data
 	var payload domain.Advertisement
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(req.Body)
-	json.Unmarshal(buf.Bytes(), &payload)
+	err := json.NewDecoder(req.Body).Decode(&payload)
+	if err != nil {
+		controller.Logger.LogError("%s", "Failed to decode payload request")
+	}
 
 	controller.AdvertisementInteractor.Store(payload)
 
-	writer.Header().Set("Content-Type", "application/json")
-	writer.WriteHeader(http.StatusOK)
-	writer.Write(buf.Bytes())
+	response.OkResponse("Success store new ad", payload)
 }
 
 // This should be a route handler function
@@ -57,33 +58,26 @@ func (controller *Advertisement) Upload() {
 	if adDocs != nil {
 		controller.AdvertisementInteractor.Upload(*adDocs)
 	}
-
 }
 
 func (controller *Advertisement) Search(writer http.ResponseWriter, req *http.Request) {
 	//context := req.Context()
 
+	response := utils.InitResponse(controller.Logger, writer)
+
 	// Process the request
 	query := req.URL.Query().Get("q")
 
 	if len(query) == 0 {
-		writer.WriteHeader(http.StatusBadRequest)
-		writer.Write([]byte("missing search query in query params"))
-		return
+		response.BadRequestResponse("Missing search query in query params")
 	}
 
 	// Get relevant records
 	records := controller.AdvertisementInteractor.Search(query)
 	// if err != nil {
-	// 	writer.WriteHeader(http.StatusInternalServerError)
-	// 	writer.Write([]byte(err.Error()))
-	// 	return
+	// 	response.InternalServerErrorResponse("Cannot do search query: " + err.Error())
 	// }
 
 	// output success response
-	buf := new(bytes.Buffer)
-	encoder := json.NewEncoder(buf)
-	encoder.Encode(records)
-	writer.Header().Set("Content-Type", "application/json")
-	writer.Write(buf.Bytes())
+	response.OkResponse("Search success", records)
 }

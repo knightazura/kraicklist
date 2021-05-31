@@ -8,9 +8,11 @@ import (
 	"github.com/knightazura/interfaces"
 	"github.com/knightazura/services"
 	"github.com/knightazura/usecases"
+	"github.com/knightazura/utils"
 	"github.com/knightazura/vendors"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+	"log"
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
@@ -29,11 +31,14 @@ var	advertisementInteractor = &usecases.AdvertisementInteractor{
 type IntegrationTestSuite struct {
 	suite.Suite
 	EntityName string
+	Logger *utils.Logger
 }
 
 func (suite *IntegrationTestSuite) SetupTest() {
-	infrastructure.Bootstrap()
+	logger := utils.InitLogger()
+	infrastructure.Bootstrap(logger)
 	suite.EntityName = "advertisement"
+	suite.Logger = logger
 }
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -113,10 +118,14 @@ func (suite *IntegrationTestSuite) TestSearchAd() {
 		if err != nil {
 			suite.Fail("Cannot make search request to API")
 		} else {
+			var successResponse utils.SuccessResponse
+			json.NewDecoder(res.Body).Decode(&successResponse)
+
+			log.Println(successResponse)
+
 			var searchResponse domain.SearchedDocument
-			buf := new(bytes.Buffer)
-			buf.ReadFrom(res.Body)
-			json.Unmarshal(buf.Bytes(), &searchResponse)
+			sr, _ := json.Marshal(successResponse.Data)
+			json.Unmarshal(sr, &searchResponse)
 
 			var doc domain.GeneralDocument
 			d, _ := json.Marshal(searchResponse.Hits[0])
@@ -146,10 +155,12 @@ func (suite *IntegrationTestSuite) hitStoreApi(payload domain.Advertisement) *do
 	if err != nil {
 		suite.FailNow("Failed do request: " + err.Error())
 	}
+	var successResponse utils.SuccessResponse
+	json.NewDecoder(res.Body).Decode(&successResponse)
+
 	var searchResponse domain.Advertisement
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(res.Body)
-	json.Unmarshal(buf.Bytes(), &searchResponse)
+	srByte, _ := json.Marshal(successResponse.Data)
+	json.Unmarshal(srByte, &searchResponse)
 
 	return &searchResponse
 }
@@ -158,7 +169,7 @@ func (suite *IntegrationTestSuite) createTestServer(endpoint string) *httptest.S
 	searchEngine, _ := infrastructure.InitSearchEngine()
 	seeder := &services.Seeder{}
 
-	adController := interfaces.InitAdvertisementController(searchEngine, seeder)
+	adController := interfaces.InitAdvertisementController(suite.Logger, searchEngine, seeder)
 
 	if endpoint == "store" {
 		return httptest.NewServer(http.HandlerFunc(adController.Store))
