@@ -102,3 +102,17 @@ func (a *Algolia) DeleteIndex(indexName string) {
 		a.Logger.LogError("Failed to delete Algolia index: %s", err.Error())
 	}
 }
+
+func (a *Algolia) TotalDocuments(indexName string) int64 {
+	res, _ := a.Client.ListIndices()
+	totalDocuments := int64(0)
+
+	for _, item := range res.Items {
+		if item.Name == indexName {
+			totalDocuments = item.Entries
+			break
+		}
+	}
+
+	return totalDocuments
+}

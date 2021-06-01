@@ -54,7 +54,11 @@ func (controller *Advertisement) Upload() {
 	// Load ads data from file
 	adDocs := controller.Seeder.LoadData("./data.gz")
 	if adDocs != nil {
-		controller.AdvertisementInteractor.Upload(*adDocs)
+		total := controller.AdvertisementInteractor.IndexedDocumentRepository.GetTotalDocuments("advertisement")
+		// To avoid usage overload in algolia service
+		if total < int64(len(*adDocs)) {
+			controller.AdvertisementInteractor.Upload(*adDocs)
+		}
 	}
 }
 

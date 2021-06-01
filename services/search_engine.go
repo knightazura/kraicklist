@@ -48,3 +48,7 @@ func (se *SearchEngineHandler) DeleteIndex(indexName string) {
 	se.Client.DeleteIndex(indexName)
 	return
 }
+
+func (se *SearchEngineHandler) TotalDocuments(indexName string) int64 {
+	return se.Client.TotalDocuments(indexName)
+}

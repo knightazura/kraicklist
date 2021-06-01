@@ -79,3 +79,8 @@ func (m *Meilisearch) DeleteIndex(indexName string) {
 		log.Printf("Failed to delete Meilisearch index: %s", err.Error())
 	}
 }
+
+func (e *Meilisearch) TotalDocuments(indexName string) int64 {
+	res, _ := e.Client.Stats().Get(indexName)
+	return res.NumberOfDocuments
+}

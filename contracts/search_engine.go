@@ -9,4 +9,5 @@ type SearchEngine interface {
 	Add(docs *domain.GeneralDocuments, indexName string)
 	DeleteDocument(docID string, indexName string)
 	DeleteIndex(indexName string)
+	TotalDocuments(indexName string) int64
 }
