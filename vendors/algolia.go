@@ -24,9 +24,9 @@ func InitAlgolia() contracts.SearchEngine {
 		Client: search.NewClient(appId, apiKey),
 		Settings: &search.Settings{
 			SearchableAttributes: opt.SearchableAttributes(
-				"title",
-				"content",
-				"tags",
+				"data.title",
+				"data.content",
+				"data.tags",
 				),
 		},
 	}
