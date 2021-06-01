@@ -39,6 +39,11 @@ func (se *SearchEngineHandler) PerformSearch(query string, indexName string) (re
 	return
 }
 
+func (se *SearchEngineHandler) DeleteDocument(docID string, indexName string) {
+	se.Client.DeleteDocument(docID, indexName)
+	return
+}
+
 func (se *SearchEngineHandler) DeleteIndex(indexName string) {
 	se.Client.DeleteIndex(indexName)
 	return

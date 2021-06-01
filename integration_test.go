@@ -15,6 +15,7 @@ import (
 	"math/rand"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -148,7 +149,7 @@ func (suite *IntegrationTestSuite) TestSearchAd() {
 
 func (suite *IntegrationTestSuite) hitStoreApi(payload domain.Advertisement) *domain.Advertisement {
 	// Cleanup search engine documents
-	suite.clearIndex()
+	suite.resetTestDocument(payload.ID)
 
 	server := suite.createTestServer("store")
 	defer server.Close()
@@ -179,8 +180,8 @@ func (suite *IntegrationTestSuite) createTestServer(endpoint string) *httptest.S
 	}
 }
 
-func (suite *IntegrationTestSuite) clearIndex() {
-	suite.SearchEngine.DeleteIndex(suite.EntityName)
+func (suite *IntegrationTestSuite) resetTestDocument(docID int64) {
+	suite.SearchEngine.DeleteDocument(strconv.FormatInt(docID, 10), suite.EntityName)
 }
 
 func randomString(n int) string {

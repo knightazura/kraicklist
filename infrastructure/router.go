@@ -40,9 +40,7 @@ func setupServer(logger *utils.Logger, services *Services) {
 	http.HandleFunc("/advertisement/search", adController.Search)
 	http.HandleFunc("/advertisement", adController.Store)
 	// Challenge purpose: mock of /advertisement/upload endpoint
-	if os.Getenv("SEARCH_ENGINE_ACTIVE") == "meilisearch" {
-		adController.Upload()
-	}
+	adController.Upload()
 
 	// Setup and start server
 	port := os.Getenv("PORT")

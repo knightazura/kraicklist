@@ -7,6 +7,7 @@ import (
 	"github.com/knightazura/domain"
 	"github.com/knightazura/utils"
 	"os"
+	"strconv"
 )
 
 type Algolia struct {
@@ -73,6 +74,14 @@ func (a *Algolia) Search(indexName string, query string) (result domain.Searched
 		}
 	}
 	return
+}
+
+func (a *Algolia) DeleteDocument(docID string, indexName string) {
+	index := a.Client.InitIndex(indexName)
+	_, err := index.DeleteObject(docID)
+	if err != nil {
+		a.Logger.LogError("Failed to delete Algolia document: %s", err.Error())
+	}
 }
 
 func (a *Algolia) DeleteIndex(indexName string) {

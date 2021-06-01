@@ -71,6 +71,13 @@ func (m *Meilisearch) Search(indexName string, query string) (result domain.Sear
 	return
 }
 
+func (m *Meilisearch) DeleteDocument(docID string, indexName string) {
+	_, err := m.Client.Documents(indexName).Delete(docID)
+	if err != nil {
+		log.Printf("Failed to delete Meilisearch document: %s", err.Error())
+	}
+}
+
 func (m *Meilisearch) DeleteIndex(indexName string) {
 	_, err := m.Client.Indexes().Delete(indexName)
 	if err != nil {
