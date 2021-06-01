@@ -6,4 +6,5 @@ import "github.com/knightazura/domain"
 type IndexedDocumentRepository interface {
 	SearchDocs(query string, indexName string) domain.SearchedDocument
 	IndexDocs(docs *domain.GeneralDocuments, indexName string)
+	GetTotalDocuments(indexName string) int64
 }
