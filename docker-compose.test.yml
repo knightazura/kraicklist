@@ -14,6 +14,6 @@ services:
     volumes:
       - ~/.docker/meilisearch_test:/var/lib/meilisearch
     ports:
-      - "7007:7700"
+      - "7700:7700"
     networks:
       - kraicklist_test
