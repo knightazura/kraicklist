@@ -24,9 +24,15 @@ FROM busybox
 
 ENV PORT="8800"
 
+# Create log
+RUN mkdir log
+RUN touch log/error.log && \
+    touch log/access.log
+
 # Copy static files
 COPY ./data.gz ./data.gz
 COPY ./static ./static
+COPY ./.env ./.env
 
 # Copy binary app from builder
 COPY --from=builder /build/kraicklist .
