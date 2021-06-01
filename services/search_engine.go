@@ -24,6 +24,8 @@ func InitSearchEngine() (*SearchEngineHandler, error) {
 		engine = vendors.InitMeilisearch()
 	case "algolia":
 		engine = vendors.InitAlgolia()
+	default:
+		engine = vendors.InitRiot()
 	}
 	seHandler.Client = engine
 
