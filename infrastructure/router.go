@@ -45,9 +45,9 @@ func setupServer(logger *utils.Logger, services *Services) {
 	}
 
 	// Setup and start server
-	port := os.Getenv("APP_PORT")
+	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3001"
+		port = "8800" // set default port to production
 	}
 	fmt.Printf("Server is listening on %s...", port)
 	

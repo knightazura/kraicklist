@@ -11,6 +11,12 @@ import (
 func Bootstrap(logger *utils.Logger) {
 	filePath := ".env"
 
+	// Dev
+	appMode := os.Getenv("APP_MODE")
+	if appMode == "dev" {
+		filePath = ".env.local"
+	}
+
 	envFile, err := os.Open(filePath)
 	if err != nil {
 		logger.LogError("Failed to open env file %s", err.Error())

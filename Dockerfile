@@ -22,11 +22,13 @@ RUN go build \
 # Final image
 FROM busybox
 
-WORKDIR /app
+ENV PORT="8800"
+
 # Copy static files
 COPY ./data.gz ./data.gz
 COPY ./static ./static
-COPY ./.env ./.env
+
 # Copy binary app from builder
 COPY --from=builder /build/kraicklist .
-EXPOSE 3001
+
+EXPOSE 8800
