@@ -24,6 +24,8 @@ func InitAlgolia() contracts.SearchEngine {
 		Logger: utils.InitLogger(),
 		Client: search.NewClient(appId, apiKey),
 		Settings: &search.Settings{
+			// Search can be improved with this option
+			// CustomRanking: opt.CustomRanking(),
 			SearchableAttributes: opt.SearchableAttributes(
 				"data.title",
 				"data.content",
@@ -36,9 +38,18 @@ func InitAlgolia() contracts.SearchEngine {
 func (a *Algolia) Add(docs *domain.GeneralDocuments, indexName string) {
 	index := a.Client.InitIndex(indexName)
 
+	// Assign to following algolia document structure
+	var algoDocs []domain.AlgoliaDocument
+	for _, doc := range *docs {
+		algoDocs = append(algoDocs, domain.AlgoliaDocument{
+			ObjectID: strconv.FormatInt(doc.ID, 10),
+			Data: doc.Data,
+		})
+	}
+
 	// Do the job
 	_, err := index.SaveObjects(
-		*docs,
+		algoDocs,
 		opt.AutoGenerateObjectIDIfNotExist(true),
 		opt.ExposeIntermediateNetworkErrors(true),
 		)

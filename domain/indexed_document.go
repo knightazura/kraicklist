@@ -19,12 +19,8 @@ type GeneralDocument struct {
 
 type GeneralDocuments []GeneralDocument
 
-// For vendor A Search Engine
-type MeilisearchDocument struct {
-	ID int64 `json:"id"`
+// Algolia document struct
+type AlgoliaDocument struct {
+	ObjectID string `json:"objectID"`
 	Data interface{} `json:"data"`
 }
-
-type MeilisearchDocuments []MeilisearchDocument
-
-// For vendor B Search Engine

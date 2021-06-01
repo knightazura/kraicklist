@@ -40,12 +40,7 @@ func (m *Meilisearch) Add(docs *domain.GeneralDocuments, indexName string) {
 		}
 	}
 
-	var documents domain.GeneralDocuments
-	for _, doc := range *docs {
-		documents = append(documents, doc)
-	}
-
-	_, err := m.Client.Documents(indexName).AddOrUpdate(documents)
+	_, err := m.Client.Documents(indexName).AddOrUpdate(docs)
 	if err != nil {
 		log.Fatalf("Failed to add %s documents: %v", indexName, err)
 		return
