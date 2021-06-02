@@ -1,8 +1,9 @@
 package vendors
 
 import (
-	"github.com/knightazura/utils"
 	"os"
+
+	"github.com/knightazura/utils"
 
 	"github.com/knightazura/contracts"
 	"github.com/knightazura/domain"
@@ -10,7 +11,7 @@ import (
 )
 
 type Meilisearch struct {
-	Logger   *utils.Logger
+	Logger *utils.Logger
 	Client meilisearch.ClientInterface
 }
 
@@ -43,7 +44,7 @@ func (m *Meilisearch) Add(doc *domain.GeneralDocument, indexName string) {
 	}
 	meiliDoc := domain.MeilisearchDocument{
 		{
-			"id": doc.ID,
+			"id":   doc.ID,
 			"data": doc.Data,
 		},
 	}
@@ -65,7 +66,7 @@ func (m *Meilisearch) BulkInsert(docs *domain.GeneralDocuments, indexName string
 	var meiliDocs domain.MeilisearchDocument
 	for _, doc := range *docs {
 		meiliDocs = append(meiliDocs, map[string]interface{}{
-			"id": doc.ID,
+			"id":   doc.ID,
 			"data": doc.Data,
 		})
 	}
@@ -143,9 +144,4 @@ func (m *Meilisearch) createIndex(indexName string) {
 			return
 		}
 	}
-}
-
-func (e *Meilisearch) TotalDocuments(indexName string) int64 {
-	res, _ := e.Client.Stats().Get(indexName)
-	return res.NumberOfDocuments
 }
