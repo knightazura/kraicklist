@@ -144,3 +144,8 @@ func (m *Meilisearch) createIndex(indexName string) {
 		}
 	}
 }
+
+func (e *Meilisearch) TotalDocuments(indexName string) int64 {
+	res, _ := e.Client.Stats().Get(indexName)
+	return res.NumberOfDocuments
+}
