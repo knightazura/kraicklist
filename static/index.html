@@ -24,8 +24,9 @@
           const data = Object.fromEntries(new FormData(form));
           const response = fetch(`/advertisement/search?q=${data.query}`).then(response => {
             response.json().then(result => {
-              if (!result) {
+              if (!result.data.hits || result.data.total_hits === 0) {
                 alert(`No result for ${data.query}`);
+                resultList.innerHTML = ""
                 return;
               }
               Controller.updateList(result);
