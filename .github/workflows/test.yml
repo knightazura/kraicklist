@@ -23,5 +23,8 @@ jobs:
     - name: Test
       env:
         APP_MODE: test
+        SEARCH_ENGINE_ACTIVE: algolia
+        ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
+        ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
         PORT: 7007
       run: go test ./...
