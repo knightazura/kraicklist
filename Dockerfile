@@ -36,5 +36,6 @@ COPY ./.env ./.env
 
 # Copy binary app from builder
 COPY --from=builder /build/kraicklist .
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 EXPOSE 8800
