@@ -163,7 +163,7 @@ func (a *Algolia) createIndex(indexName string) *search.Index {
 		return nil
 	}
 	if ok {
-		a.Logger.LogAccess("Algolia: Create %s index successfully", index)
+		a.Logger.LogAccess("Algolia: Create %s index successfully", indexName)
 		return index
 	}
 
