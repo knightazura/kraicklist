@@ -46,30 +46,6 @@ func TestIntegrationTestSuite(t *testing.T) {
 	suite.Run(t, new(IntegrationTestSuite))
 }
 
-func (suite *IntegrationTestSuite) TestCreateNewAd() {
-	payload := domain.Advertisement{
-		ID: int64(1),
-		Title: randomString(20),
-		Content: randomString(100),
-		Tags: []string{randomString(3), randomString(4)},
-	}
-	gd := domain.GeneralDocument{
-		ID: payload.ID,
-		Data: &payload,
-	}
-
-	// Use case if payload is correct
-	advertisementRepository.Mock.On("Store", &payload).Return(&payload, &gd)
-	indexedDocumentRepository.Mock.On("IndexDocs", &domain.GeneralDocuments{gd}, suite.EntityName).Return(nil)
-
-	// Test
-	// If payload is correct
-	newAd := advertisementInteractor.Store(payload)
-	suite.NotNil(newAd, "New add should be added")
-	suite.Equal(payload.ID, newAd.ID)
-	suite.Equal(payload.Title, newAd.Title)
-}
-
 func (suite *IntegrationTestSuite) TestCreateNewAdViaRequest() {
 	payload := domain.Advertisement{
 		ID: int64(2),
@@ -88,6 +64,7 @@ func (suite *IntegrationTestSuite) TestCreateNewAdViaRequest() {
 }
 
 func (suite *IntegrationTestSuite) TestSearchAd() {
+	suite.Logger.LogAccess("Test search ad, started...")
 	// Init server
 	server := suite.createTestServer("search")
 	defer server.Close()
@@ -140,9 +117,9 @@ func (suite *IntegrationTestSuite) TestSearchAd() {
 			json.Unmarshal(dd, &docData)
 
 			// Assertions
-			suite.Equal(int64(1), searchResponse.TotalHits)
-			suite.Equal(newAd.ID, docData.ID)
-			suite.Equal(newAd.Title, docData.Title)
+			suite.Equal(int64(1), searchResponse.TotalHits, "Total hits must be equal")
+			suite.Equal(newAd.ID, docData.ID, "Document ID must be equal")
+			suite.Equal(newAd.Title, docData.Title, "Document title must be same")
 		}
 	}
 }

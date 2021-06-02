@@ -1,8 +1,17 @@
 name: Integration test
 
 on:
+  pull_request:
+    paths-ignore:
+      - "static/**"
+    branches:
+      - master
   push:
-    branches: [dev]
+    paths-ignore:
+      - "static/**"
+    branches:
+      - dev
+      - master
 
 jobs:
   integration_test:
@@ -23,5 +32,8 @@ jobs:
     - name: Test
       env:
         APP_MODE: test
+        SEARCH_ENGINE_ACTIVE: algolia
+        ALGOLIA_APP_ID: ${{ secrets.ALGOLIA_APP_ID }}
+        ALGOLIA_API_KEY: ${{ secrets.ALGOLIA_API_KEY }}
         PORT: 7007
       run: go test ./...

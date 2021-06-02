@@ -3,7 +3,6 @@ package usecases
 import (
 	"github.com/knightazura/domain"
 	"github.com/stretchr/testify/mock"
-	"log"
 )
 
 type IndexedDocumentRepositoryMock struct {
@@ -11,11 +10,15 @@ type IndexedDocumentRepositoryMock struct {
 }
 
 func (repo *IndexedDocumentRepositoryMock) SearchDocs(query string, indexName string) domain.SearchedDocument {
-	log.Println("implement me")
+	repo.Mock.Called(query, indexName)
 	return domain.SearchedDocument{}
 }
 
-func (repo *IndexedDocumentRepositoryMock) IndexDocs(docs *domain.GeneralDocuments, indexName string) {
+func (repo *IndexedDocumentRepositoryMock) IndexDocs(doc *domain.GeneralDocument, indexName string) {
+	repo.Mock.Called(doc, indexName)
+}
+
+func (repo *IndexedDocumentRepositoryMock) BulkIndexDocs(docs *domain.GeneralDocuments, indexName string) {
 	repo.Mock.Called(docs, indexName)
 }
 

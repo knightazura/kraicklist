@@ -35,7 +35,8 @@
 
         updateList: result => {
           const rows = [];
-          for (let { data } of result.data.hits) {
+          for (let item of result.data.hits) {
+            data = (item.hasOwnProperty("data")) ? item.data : item;
             rows.push(
               `
                             <li>

@@ -1,12 +1,13 @@
 package usecases
 
 import (
-	"github.com/knightazura/domain"
 	"log"
+
+	"github.com/knightazura/domain"
 )
 
 type AdvertisementInteractor struct {
-	AdvertisementRepository AdvertisementRepository
+	AdvertisementRepository   AdvertisementRepository
 	IndexedDocumentRepository IndexedDocumentRepository
 }
 
@@ -18,7 +19,7 @@ func (adInteractor *AdvertisementInteractor) Store(payload domain.Advertisement)
 	log.Printf(`New ad: "%s" has been stored successfully`, newAd.Title)
 
 	// Index the new entity
-	adInteractor.ConvertToIndexedDocuments(domain.GeneralDocuments{*newDoc})
+	adInteractor.ConvertToIndexedDocument(*newDoc)
 
 	return newAd
 }
@@ -33,13 +34,12 @@ func (adInteractor *AdvertisementInteractor) Upload(ads domain.Advertisements) (
 	newAds, docs = adInteractor.AdvertisementRepository.BulkStore(&ads)
 
 	// Index the new entities
-	adInteractor.ConvertToIndexedDocuments(*docs)
+	adInteractor.IndexedDocumentRepository.BulkIndexDocs(docs, EntityName)
 	return
 }
 
 // Convert advertisement data to search engine document
 // Should add context as first parameter
-func (adInteractor *AdvertisementInteractor) ConvertToIndexedDocuments(docs domain.GeneralDocuments) {
-	adInteractor.IndexedDocumentRepository.IndexDocs(&docs, EntityName)
-	return
+func (adInteractor *AdvertisementInteractor) ConvertToIndexedDocument(doc domain.GeneralDocument) {
+	adInteractor.IndexedDocumentRepository.IndexDocs(&doc, EntityName)
 }

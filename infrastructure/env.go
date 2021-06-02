@@ -2,9 +2,10 @@ package infrastructure
 
 import (
 	"bufio"
-	"github.com/knightazura/utils"
 	"os"
 	"strings"
+
+	"github.com/knightazura/utils"
 )
 
 // Load app configuration variables from an env file.
@@ -15,6 +16,9 @@ func Bootstrap(logger *utils.Logger) {
 	appMode := os.Getenv("APP_MODE")
 	if appMode == "dev" {
 		filePath = ".env.local"
+	}
+	if appMode == "test" {
+		filePath = ".env.test"
 	}
 
 	envFile, err := os.Open(filePath)
