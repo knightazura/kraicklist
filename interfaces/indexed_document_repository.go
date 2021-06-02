@@ -15,8 +15,14 @@ func (id *IndexedDocumentRepository) SearchDocs(query string, indexName string) 
 }
 
 // Convert general document to meilisearch document
-func (id *IndexedDocumentRepository) IndexDocs(docs *domain.GeneralDocuments, indexName string) {
-	id.SearchEngine.IndexDocuments(docs, indexName)
+func (id *IndexedDocumentRepository) IndexDocs(doc *domain.GeneralDocument, indexName string) {
+	id.SearchEngine.IndexDocuments(doc, indexName)
+
+	return
+}
+
+func (id *IndexedDocumentRepository) BulkIndexDocs(docs *domain.GeneralDocuments, indexName string) {
+	id.SearchEngine.Client.BulkInsert(docs, indexName)
 
 	return
 }

@@ -2,21 +2,22 @@ package vendors
 
 import (
 	"encoding/json"
+	"reflect"
+	"strconv"
+
 	"github.com/go-ego/riot"
 	"github.com/go-ego/riot/types"
 	"github.com/knightazura/contracts"
 	"github.com/knightazura/domain"
 	"github.com/knightazura/utils"
-	"reflect"
-	"strconv"
 )
 
 var (
-	se = riot.Engine{}
+	se      = riot.Engine{}
 	options = types.RankOpts{
 		ScoringCriteria: AdvertisementScoringCriteria{},
-		OutputOffset: 0,
-		MaxOutputs: 100,
+		OutputOffset:    0,
+		MaxOutputs:      100,
 	}
 )
 
@@ -30,7 +31,7 @@ type Riot struct {
 func InitRiot() contracts.SearchEngine {
 	// Init. & configure Riot
 	se.Init(types.EngineOpts{
-		Using: 1,
+		Using:   1,
 		GseMode: true,
 		IndexerOpts: &types.IndexerOpts{
 			IndexType: types.LocsIndex,
@@ -59,32 +60,58 @@ func (r *Riot) Search(indexName string, query string) domain.SearchedDocument {
 		ads = append(ads, ad)
 		hits = append(hits, ad)
 	}
+	defer r.Client.Close()
+
+	r.Logger.LogAccess("Riot: Search %s in %s documents. Found %d", query, indexName, len(ads))
 
 	return domain.SearchedDocument{
-		Hits: hits,
+		Hits:      hits,
 		TotalHits: int64(len(ads)),
-		Query: query,
+		Query:     query,
 	}
 }
 
-func (r *Riot) Add(docs *domain.GeneralDocuments, indexName string) {
+func (r *Riot) Add(doc *domain.GeneralDocument, indexName string) {
+	ad := doc.Data.(*domain.Advertisement)
+	fields := AdvertisementScoringFields{
+		Title:   ad.Title,
+		Content: ad.Content,
+	}
+
+	fj, _ := json.Marshal(fields)
+	r.Client.Index(strconv.FormatInt(ad.ID, 10), types.DocData{
+		Content: string(fj),
+		Fields:  fields,
+	})
+	defer r.Client.Close()
+
+	r.Client.Flush()
+
+	r.Logger.LogAccess("Riot: Success add new %s, %s document", ad.Title, indexName)
+
+	return
+}
+
+func (r *Riot) BulkInsert(docs *domain.GeneralDocuments, indexName string) {
 	for _, doc := range *docs {
 		ad := doc.Data.(domain.Advertisement)
 
 		fields := AdvertisementScoringFields{
-			Title: ad.Title,
+			Title:   ad.Title,
 			Content: ad.Content,
 		}
 
 		fj, _ := json.Marshal(fields)
 		r.Client.Index(strconv.FormatInt(ad.ID, 10), types.DocData{
 			Content: string(fj),
-			Fields: fields,
+			Fields:  fields,
 		})
 	}
 	defer r.Client.Close()
 
 	r.Client.Flush()
+
+	r.Logger.LogAccess("Riot: Bulk insert %s documents", indexName)
 
 	return
 }
@@ -97,7 +124,7 @@ func (r *Riot) DeleteDocument(docID string, indexName string) {
 }
 
 func (r *Riot) DeleteIndex(indexName string) {
-	r.Logger.LogAccess("There's no remove delete index in Riot: %s index", indexName)
+	r.Logger.LogAccess("Riot: There's no remove delete index in Riot: %s index", indexName)
 }
 
 func (r *Riot) TotalDocuments(indexName string) int64 {
@@ -105,11 +132,11 @@ func (r *Riot) TotalDocuments(indexName string) int64 {
 }
 
 type AdvertisementScoringFields struct {
-	Title string
+	Title   string
 	Content string
 }
 
-type AdvertisementScoringCriteria struct {}
+type AdvertisementScoringCriteria struct{}
 
 func (crit AdvertisementScoringCriteria) Score(doc types.IndexedDoc, fields interface{}) []float32 {
 	if doc.TokenProximity > MaxTokenProximity {

@@ -60,7 +60,7 @@ func (suite *IntegrationTestSuite) TestCreateNewAd() {
 
 	// Use case if payload is correct
 	advertisementRepository.Mock.On("Store", &payload).Return(&payload, &gd)
-	indexedDocumentRepository.Mock.On("IndexDocs", &domain.GeneralDocuments{gd}, suite.EntityName).Return(nil)
+	indexedDocumentRepository.Mock.On("IndexDocs", &gd, suite.EntityName).Return(nil)
 
 	// Test
 	// If payload is correct

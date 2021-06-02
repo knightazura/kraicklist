@@ -19,6 +19,9 @@ type GeneralDocument struct {
 
 type GeneralDocuments []GeneralDocument
 
+// Meilisearch document
+type MeilisearchDocument []map[string]interface{}
+
 // Algolia document struct
 type AlgoliaDocument struct {
 	ObjectID string `json:"objectID"`

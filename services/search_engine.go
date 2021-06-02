@@ -1,15 +1,16 @@
 package services
 
 import (
+	"os"
+
 	"github.com/knightazura/contracts"
 	"github.com/knightazura/domain"
 	"github.com/knightazura/vendors"
-	"os"
 )
 
 type SearchEngineHandler struct {
 	IndexName string
-	Client contracts.SearchEngine
+	Client    contracts.SearchEngine
 	// another client can be added here
 }
 
@@ -32,8 +33,8 @@ func InitSearchEngine() (*SearchEngineHandler, error) {
 	return seHandler, nil
 }
 
-func (se *SearchEngineHandler) IndexDocuments(docs *domain.GeneralDocuments, indexName string) {
-	se.Client.Add(docs, indexName)
+func (se *SearchEngineHandler) IndexDocuments(doc *domain.GeneralDocument, indexName string) {
+	se.Client.Add(doc, indexName)
 }
 
 func (se *SearchEngineHandler) PerformSearch(query string, indexName string) (result domain.SearchedDocument) {
