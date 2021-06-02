@@ -1,0 +1,28 @@
+name: Integration test
+
+on:
+  pull_request:
+    paths-ignore:
+      - "static/**"
+    branches:
+      - master
+  push:
+    paths-ignore:
+      - "static/**"
+    branches:
+      - dev
+      - master
+
+jobs:
+  biuld:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: "1.15"
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build the app
+      run: go build main.go
